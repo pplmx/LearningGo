@@ -65,6 +65,7 @@ func CountPrimes(n int) int {
 
 func countPrimesUltimate(n int) int {
 	var sum int
+	// create a slice whose length is n
 	f := make([]bool, n)
 	for i := 2; i <= int(math.Sqrt(float64(n))); i++ {
 		if f[i] == false {
