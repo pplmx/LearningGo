@@ -1,6 +1,6 @@
 package main
 
-/*Definition for singly-linked list.*/
+// ListNode ==> Definition for singly-linked list.
 type ListNode struct {
 	Val  int
 	Next *ListNode
@@ -8,21 +8,21 @@ type ListNode struct {
 
 func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	/*
-	# Python Implementation
-	def add_two_numbers(self, l1: ListNode, l2: ListNode) -> ListNode:
-	   dummy = cur = ListNode()
-	   carry = 0
-	   while l1 or l2 or carry:
-		   if l1:
-			   carry += l1.val
-			   l1 = l1.next
-		   if l2:
-			   carry += l2.val
-			   l2 = l2.next
-		   cur.next = ListNode(carry % 10)
-		   cur = cur.next
-		   carry //= 10
-	   return dummy.next
+		# Python Implementation
+		def add_two_numbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+		   dummy = cur = ListNode()
+		   carry = 0
+		   while l1 or l2 or carry:
+			   if l1:
+				   carry += l1.val
+				   l1 = l1.next
+			   if l2:
+				   carry += l2.val
+				   l2 = l2.next
+			   cur.next = ListNode(carry % 10)
+			   cur = cur.next
+			   carry //= 10
+		   return dummy.next
 	*/
 	carry := 0
 	dummy := &ListNode{}
