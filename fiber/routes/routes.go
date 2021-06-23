@@ -38,9 +38,5 @@ func New() *fiber.App {
 }
 
 func HttpNotFound(c *fiber.Ctx) error {
-    return c.Status(404).JSON(handlers.ResponseHTTP{
-        Success: false,
-        Data:    nil,
-        Message: "The requested url is not found.",
-    })
+    return c.Status(404).SendFile("fiber/static/404.html")
 }
