@@ -51,6 +51,6 @@ func (udg *Graph) getNeighborEdges() {
 
 }
 
-func filter(edges [...][2]int) {
+func filterEdges(edges [...][2]int) {
 
 }
