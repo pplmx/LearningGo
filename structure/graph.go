@@ -23,8 +23,8 @@ type Graph struct {
 
 // input edge set: e.g. [(1,3), (2,5), (3,2), (3,1)]
 // [3][2]int{{1,3}, {3,1}}
-func (udg *Graph) create(edges [...][2]int) {
-
+func (udg *Graph) create(edges []UndirectedEdge) {
+	_ = filterEdges(edges)
 }
 
 func (udg *Graph) setNodeSet() {
@@ -51,6 +51,8 @@ func (udg *Graph) getNeighborEdges() {
 
 }
 
-func filterEdges(edges [...][2]int) {
-
+func filterEdges(edges []UndirectedEdge) []UndirectedEdge {
+	var filtered []UndirectedEdge
+	printEdges(edges)
+	return filtered
 }
