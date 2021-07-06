@@ -56,3 +56,17 @@ func filterEdges(edges []UndirectedEdge) []UndirectedEdge {
 	printEdges(edges)
 	return filtered
 }
+
+func test() {
+	edges := []UndirectedEdge{
+		{
+			one:     1,
+			another: 2,
+		},
+		{
+			one:     2,
+			another: 3,
+		},
+	}
+	filterEdges(edges)
+}
