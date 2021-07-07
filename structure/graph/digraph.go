@@ -1,4 +1,4 @@
-package structure
+package graph
 
 // Directed Graph, implementation with Orthogonal List
 

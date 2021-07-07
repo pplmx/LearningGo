@@ -1,4 +1,4 @@
-package structure
+package graph
 
 type EdgeData int // Edge data, e.g. weight
 type NodeData int // Node data
@@ -51,13 +51,7 @@ func (udg *Graph) getNeighborEdges() {
 
 }
 
-func filterEdges(edges []UndirectedEdge) []UndirectedEdge {
-	var filtered []UndirectedEdge
-	printEdges(edges)
-	return filtered
-}
-
-func test() {
+func TestUndirectedGraph() {
 	edges := []UndirectedEdge{
 		{
 			one:     1,
@@ -67,6 +61,19 @@ func test() {
 			one:     2,
 			another: 3,
 		},
+		{
+			one:     1,
+			another: 2,
+		},
+		{
+			one:     2,
+			another: 3,
+		},
+		{
+			one:     2,
+			another: 1,
+		},
 	}
-	filterEdges(edges)
+	edges = filterEdges(edges)
+	printEdges(edges)
 }
