@@ -1,5 +1,7 @@
 package graph
 
+// DEPRECATED!!! This file is deprecated.
+
 import "fmt"
 
 type UndirectedEdge struct {
@@ -11,11 +13,11 @@ type DirectedArc struct {
 }
 
 func filterEdges(edges []UndirectedEdge) []UndirectedEdge {
-	keys := make(map[UndirectedEdge]bool)
+	existed := make(map[UndirectedEdge]bool)
 	var filtered []UndirectedEdge
 	for _, edge := range edges {
-		if _, value := keys[edge]; !value {
-			keys[edge] = true
+		if _, value := existed[edge]; !value {
+			existed[edge] = true
 			filtered = append(filtered, edge)
 		}
 	}
@@ -23,14 +25,15 @@ func filterEdges(edges []UndirectedEdge) []UndirectedEdge {
 }
 
 func filterArcs(arcs []DirectedArc) []DirectedArc {
-	keys := make(map[DirectedArc]bool)
+	// create a map: {DirectedArc: true}
+	existed := make(map[DirectedArc]bool)
 	var filtered []DirectedArc
 	// If the key(values of the slice) is not equal
 	// to the already present value in new slice (filtered)
 	// then we append it. else we jump on another element.
 	for _, arc := range arcs {
-		if _, value := keys[arc]; !value {
-			keys[arc] = true
+		if _, value := existed[arc]; !value {
+			existed[arc] = true
 			filtered = append(filtered, arc)
 		}
 	}
