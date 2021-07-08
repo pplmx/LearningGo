@@ -71,6 +71,7 @@ func filterEdgeArr(edges [][]int) [][]int {
 			edges = append(edges[:i], edges[i+1:]...)
 		}
 	}
+	fmt.Printf("2: %v\n", edges)
 	for i, edge := range edges {
 		for j := i + 1; j < len(edges); j++ {
 			if (edge[0] == edges[j][0] && edge[1] == edges[j][1]) || (edge[0] == edges[j][1] && edge[1] == edges[j][0]) {
@@ -79,6 +80,7 @@ func filterEdgeArr(edges [][]int) [][]int {
 			}
 		}
 	}
+	fmt.Printf("3: %v\n", edges)
 	return edges
 }
 
