@@ -65,23 +65,23 @@ func filterEdgeArr(edges [][]int) [][]int {
 	//    {1, 2}, // will be deleted
 	//    {1},    // will be deleted
 	//}
-	for i, edge := range edges {
-		if len(edge) < 2 {
-			// delete insignificant data
-			edges = append(edges[:i], edges[i+1:]...)
+	var filtered [][]int
+	for _, edge := range edges {
+		if len(edge) >= 2 {
+			// filter insignificant data
+			filtered = append(filtered, edge)
 		}
 	}
-	fmt.Printf("2: %v\n", edges)
-	for i, edge := range edges {
-		for j := i + 1; j < len(edges); j++ {
-			if (edge[0] == edges[j][0] && edge[1] == edges[j][1]) || (edge[0] == edges[j][1] && edge[1] == edges[j][0]) {
-				// delete edges[j], due to the repeated with previous
-				edges = append(edges[:j], edges[j+1:]...)
+	for i, edge := range filtered {
+		for j := i + 1; j < len(filtered); j++ {
+			if (edge[0] == filtered[j][0] && edge[1] == filtered[j][1]) ||
+				(edge[0] == filtered[j][1] && edge[1] == filtered[j][0]) {
+				// delete filtered[j], due to the repeated with previous
+				filtered = append(filtered[:j], filtered[j+1:]...)
 			}
 		}
 	}
-	fmt.Printf("3: %v\n", edges)
-	return edges
+	return filtered
 }
 
 func TestUndirectedGraph() {
