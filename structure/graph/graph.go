@@ -23,33 +23,38 @@ type Graph struct {
 	adjMultiList     *Node
 }
 
-// input edge set: e.g. [(1,3), (2,5), (3,2), (3,1)]
-// [3][2]int{{1,3}, {3,1}}
-func (udg *Graph) create(edges [][]int) {
-	_ = filterEdgeArr(edges)
+// input edge set:
+// e.g.
+// [][]int{{1, 3}, {3, 1}}
+// [][]int{{1, 3, 2}, {3, 1, 5}}
+func (udg Graph) create(edges [][]int) Graph {
+	filtered := filterEdgeArr(edges)
+	for _, edge := range filtered {
+
+	}
 }
 
-func (udg *Graph) setNodeSet() {
-
-}
-
-func (udg *Graph) setEdgeSet() {
-
-}
-
-func (udg *Graph) getNodeSet() {
+func (udg Graph) setNodeSet(edges [][]int) {
 
 }
 
-func (udg *Graph) getEdgeSet() {
+func (udg Graph) setEdgeSet() {
 
 }
 
-func (udg *Graph) getNeighborNodes() {
+func (udg Graph) getNodeSet() {
 
 }
 
-func (udg *Graph) getNeighborEdges() {
+func (udg Graph) getEdgeSet() {
+
+}
+
+func (udg Graph) getNeighborNodes() {
+
+}
+
+func (udg Graph) getNeighborEdges() {
 
 }
 
@@ -67,7 +72,7 @@ func filterEdgeArr(edges [][]int) [][]int {
 	//}
 	var filtered [][]int
 	for _, edge := range edges {
-		if len(edge) >= 2 {
+		if len(edge) > 1 && len(edge) < 4 {
 			// filter insignificant data
 			filtered = append(filtered, edge)
 		}
