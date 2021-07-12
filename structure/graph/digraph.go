@@ -13,12 +13,15 @@ type DiGraph struct {
 
 func filterArcArr(arcs [][]int) [][]int {
 	//arcs := [][]int{
-	//   {1, 2, 3},
-	//   {2, 3, 10},
-	//   {1, 3, 5},
-	//   {4, 3, 10},
-	//   {3, 4, 15},
-	//   {1, 2, 15}, // will be deleted
+	//    {1, 2, 3},
+	//    {2, 3, 10},
+	//    {1, 3, 5},
+	//    {4, 3, 10},
+	//    {3, 4, 15},
+	//    {1, 2, 15}, // will be deleted
+	//    {4, 5},
+	//    {1, 2},
+	//    {1},    // will be deleted
 	//}
 	var filtered [][]int
 	for _, arc := range arcs {

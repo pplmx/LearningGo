@@ -32,6 +32,7 @@ func (udg Graph) create(edges [][]int) Graph {
 	for _, edge := range filtered {
 
 	}
+	return udg
 }
 
 func (udg Graph) setNodeSet(edges [][]int) {
