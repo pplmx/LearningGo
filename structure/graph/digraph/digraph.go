@@ -1,4 +1,4 @@
-package graph
+package digraph
 
 // Directed Graph, implementation with Orthogonal List
 
