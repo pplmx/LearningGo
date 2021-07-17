@@ -1,5 +1,7 @@
 package digraph
 
+import "fmt"
+
 // Directed Graph, implementation with Orthogonal List
 
 type Vertex struct {
@@ -39,4 +41,10 @@ func filterArcArr(arcs [][]int) [][]int {
 		}
 	}
 	return filtered
+}
+
+func PrintArcs(arcs [][]int) {
+	for _, arc := range arcs {
+		fmt.Printf("(%d -> %d)\n", arc[0], arc[1])
+	}
 }
