@@ -69,6 +69,38 @@ func (udg UnGraph) Create(edges [][]VertexType) UnGraph {
 	return udg
 }
 
+func (udg UnGraph) GetNeighborVertices() {
+
+}
+
+func (udg UnGraph) GetNeighborEdges() {
+
+}
+
+// BFS Breadth-First-Search
+// bfs: Queue, enqueue, dequeue
+func (udg UnGraph) BFS() []VertexType {
+	return nil
+}
+
+// DFS Breadth-First-Search
+// dfs: Stack, push, pop
+func (udg UnGraph) DFS() []VertexType {
+	return nil
+}
+
+func (udg UnGraph) GetDegree(node VertexType) int {
+	return 0
+}
+
+func (udg UnGraph) GetVertexSet() []VertexType {
+	return udg.vertexSet
+}
+
+func (udg UnGraph) GetEdgeSet() [][]VertexType {
+	return udg.edgeSet
+}
+
 func (udg UnGraph) locateVertex(v VertexType) int {
 	for i := 0; i < udg.g.vertexNum; i++ {
 		if udg.g.adjMultiList[i].data == v {
@@ -95,26 +127,6 @@ func (udg UnGraph) setEdgeSet(edges [][]VertexType) UnGraph {
 	filteredEdges := filterEdges(edges)
 	udg.edgeSet = filteredEdges
 	return udg
-}
-
-func (udg UnGraph) GetVertexSet() []VertexType {
-	return udg.vertexSet
-}
-
-func (udg UnGraph) GetEdgeSet() [][]VertexType {
-	return udg.edgeSet
-}
-
-func (udg UnGraph) GetNeighborVertices() {
-
-}
-
-func (udg UnGraph) GetNeighborEdges() {
-
-}
-
-func (udg UnGraph) GetDegree() int {
-	return 0
 }
 
 func filterEdges(edges [][]VertexType) [][]VertexType {
