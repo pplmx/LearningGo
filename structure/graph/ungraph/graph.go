@@ -2,8 +2,8 @@ package ungraph
 
 import "fmt"
 
-type EdgeData int           // Edge data, e.g. weight
-type VertexType interface{} // Vertex type, e.g. 1, 2, 3 or A, B, C
+type EdgeData int           // EdgeData, e.g. weight
+type VertexType interface{} // VertexType, e.g. 1, 2, 3 or A, B, C
 
 type Edge struct {
 	isVisited            bool  // mark that whether an edge is visited
@@ -23,7 +23,7 @@ type Graph struct {
 	adjMultiList       []Vertex
 }
 
-// UnGraph a undirected graph object
+// UnGraph a undirected graph "class"
 type UnGraph struct {
 	g         *Graph
 	vertexSet []VertexType
@@ -85,7 +85,8 @@ func (udg UnGraph) BFS() []VertexType {
 
 // DFS Breadth-First-Search
 // dfs: Stack, push, pop
-func (udg UnGraph) DFS() []VertexType {
+func (udg UnGraph) DFS(v VertexType) []VertexType {
+	udg.locateVertex(v)
 	return nil
 }
 
