@@ -2,14 +2,14 @@ package ungraph
 
 import "fmt"
 
-type EdgeData int           // EdgeData, e.g. weight
+type EdgeInfo int           // EdgeInfo, e.g. weight
 type VertexType interface{} // VertexType, e.g. 1, 2, 3 or A, B, C
 
 type Edge struct {
-	isVisited            bool  // mark that whether an edge is visited
-	uIdx, vIdx           int   // the index of two vertex of an edge in adj_multi_list
+	isVisited            bool  // mark that whether the current edge is visited
+	uIdx, vIdx           int   // the index of two vertices of the current edge in adj_multi_list
 	uNextEdge, vNextEdge *Edge // Respectively point to the next edge attached to these two vertices
-	data                 EdgeData
+	info                 EdgeInfo
 }
 
 type Vertex struct {
@@ -78,16 +78,21 @@ func (udg UnGraph) GetNeighborEdges() {
 }
 
 // BFS Breadth-First-Search
-// bfs: Queue, enqueue, dequeue
+// Queue: enqueue, dequeue
 func (udg UnGraph) BFS() []VertexType {
 	return nil
 }
 
 // DFS Breadth-First-Search
-// dfs: Stack, push, pop
-func (udg UnGraph) DFS(v VertexType) []VertexType {
-	udg.locateVertex(v)
-	return nil
+// Stack: push, pop
+func (udg UnGraph) DFS(v VertexType) {
+	vIdx := udg.locateVertex(v)
+	visited := make(map[VertexType]bool)
+	visited[v] = true
+	tmp := udg.g.adjMultiList[vIdx].firstEdge
+	if tmp != nil {
+
+	}
 }
 
 func (udg UnGraph) GetDegree(node VertexType) int {
@@ -145,7 +150,7 @@ func filterEdges(edges [][]VertexType) [][]VertexType {
 	var filtered [][]VertexType
 	for _, edge := range edges {
 		if len(edge) > 1 && len(edge) < 4 {
-			// filter insignificant data
+			// filter insignificant info
 			filtered = append(filtered, edge)
 		}
 	}
