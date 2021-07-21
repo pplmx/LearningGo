@@ -91,7 +91,7 @@ func (udg UnGraph) DFS(v VertexType) {
 	visited[v] = true
 	tmp := udg.g.adjMultiList[vIdx].firstEdge
 	if tmp != nil {
-
+		udg.DFS(udg.g.adjMultiList[tmp.vIdx].data)
 	}
 }
 
