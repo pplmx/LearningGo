@@ -69,12 +69,19 @@ func (udg UnGraph) Create(edges [][]VertexType) UnGraph {
 	return udg
 }
 
-func (udg UnGraph) GetNeighborVertices() {
+func (udg UnGraph) GetNeighborVertices(v VertexType) []VertexType {
+	idx := udg.locateVertex(v)
+	tmp := udg.g.adjMultiList[idx].firstEdge
+	for tmp != nil {
+		if tmp.uIdx == idx {
 
+		}
+	}
+	return nil
 }
 
-func (udg UnGraph) GetNeighborEdges() {
-
+func (udg UnGraph) GetNeighborEdges(v VertexType) [][]VertexType {
+	return nil
 }
 
 // BFS Breadth-First-Search
@@ -86,10 +93,10 @@ func (udg UnGraph) BFS() []VertexType {
 // DFS Breadth-First-Search
 // Stack: push, pop
 func (udg UnGraph) DFS(v VertexType) {
-	vIdx := udg.locateVertex(v)
+	idx := udg.locateVertex(v)
 	visited := make(map[VertexType]bool)
 	visited[v] = true
-	tmp := udg.g.adjMultiList[vIdx].firstEdge
+	tmp := udg.g.adjMultiList[idx].firstEdge
 	if tmp != nil {
 		udg.DFS(udg.g.adjMultiList[tmp.vIdx].data)
 	}
