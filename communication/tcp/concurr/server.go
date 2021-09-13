@@ -12,7 +12,7 @@ import (
 var count = 0
 
 func handleConnection(c net.Conn) {
-	fmt.Print(".")
+    fmt.Println("Connection from ", c.RemoteAddr().String())
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
@@ -20,15 +20,20 @@ func handleConnection(c net.Conn) {
 			return
 		}
 
-		temp := strings.TrimSpace(string(netData))
+		temp := strings.TrimSpace(netData)
 		if temp == "STOP" {
 			break
 		}
 		fmt.Println(temp)
 		counter := strconv.Itoa(count) + "\n"
-		c.Write([]byte(string(counter)))
+		c.Write([]byte(counter))
 	}
-	c.Close()
+	defer func(c net.Conn) {
+        err := c.Close()
+        if err != nil {
+            fmt.Println("Failed to Close Connection from ", c.RemoteAddr().String())
+        }
+    }(c)
 }
 
 func main() {
@@ -39,7 +44,7 @@ func main() {
 	}
 
 	PORT := ":" + arguments[1]
-	l, err := net.Listen("tcp4", PORT)
+	l, err := net.Listen("tcp", PORT)
 	if err != nil {
 		fmt.Println(err)
 		return
