@@ -1,47 +1,33 @@
 # Self-signed Certificate
 
-## create ca.key and ca.crt
-
-### one command
+## create root key and crt
 
 ```shell
-# one command: create ca.key and ca.crt(key.pem and cert.pem)
-openssl req -x509 -sha256 -days 10240 -newkey rsa:4096 -keyout rootCA.key -out rootCA.crt \
-	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics/OU=Software Dept/CN=www.example.com"
-openssl req -x509 \
-	-sha256 \
+# Here, rootCA.key is the same as rootKey.pem. Only the file extensions are different.
+# rootCA.crt <==> rootCrt.pem. The reason is the same as the above.
+openssl req -x509 -nodes -sha256 -days 10240 -newkey rsa:4096 -keyout rootCA.key -out rootCA.crt \
+	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics, Inc./OU=Software Dept/CN=localhost"
+openssl req -x509 -nodes -sha256 \
 	-newkey rsa:4096 \
 	-days 10240 \
-	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics/OU=Software Dept/CN=www.example.com" \
-	-keyout key.pem \
-	-out cert.pem
-```
-
-### multiple command
-
-```shell
-# create root key === MUST NOT BE EXPOSED
-openssl genrsa -aes256 -out ca.key 4096
-
-# create crt with csr
-openssl req -new -key ca.key -out ca.csr \
-	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics/OU=Software Dept/CN=www.example.com"
-openssl x509 -req -days 365 -signkey ca.key -in ca.csr -out ca.crt
-
-# create crt without csr
-openssl req -x509 -new -key ca.key -sha256 -days 365 -out ca.crt \
-	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics/OU=Software Dept/CN=www.example.com"
-
+	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics, Inc./OU=Software Dept/CN=localhost" \
+	-keyout root.key.pem \
+	-out root.crt.pem
 ```
 
 ## Self-signed Certificate by Owned CA
 
 ```shell
-# 2. create server certificate
-openssl genrsa -aes256 -out server.key 4096
+openssl req -new -nodes \
+    -newkey rsa:4096 \
+    -subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics, Inc./OU=Software Dept/CN=localhost" \
+    -keyout localhost.key.pem \
+    -out localhost.csr
 
-# create crt with csr
-openssl req -new -sha256 -key server.key -out server.csr \
-	-subj "/C=CN/ST=Shanghai/L=Shanghai/O=Max Optics/OU=Software Dept/CN=www.example.com"
-openssl x509 -req -sha256 -days 365 -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -in server.csr -out server.crt
+openssl x509 -req -sha256 -CAcreateserial -days 365 \
+	-CA root.crt.pem \
+	-CAkey root.key.pem \
+	-extfile san.ext.cnf \
+	-in localhost.csr \
+	-out localhost.crt.pem
 ```
