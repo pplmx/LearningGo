@@ -23,7 +23,7 @@ OPENSSL_CONF="/System/Library/OpenSSL/openssl.cnf"
 openssl req -new -nodes \
     -newkey rsa:4096 \
     -subj "/C=CN/ST=Beijing/L=Beijing/O=MyOrg, Inc./OU=Software Dept/CN=localhost" \
-	-reqexts SAN \
+    -reqexts SAN \
     -config <(cat "${OPENSSL_CONF}" \
         <(printf "\n[SAN]\nsubjectAltName=DNS:localhost")) \
     -keyout localhost.key.pem \
