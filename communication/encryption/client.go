@@ -3,7 +3,9 @@ package main
 import (
     "bufio"
     "crypto/tls"
+    "crypto/x509"
     "fmt"
+    "io/ioutil"
     "log"
     "os"
     "strings"
@@ -16,8 +18,22 @@ func main() {
         return
     }
 
+    serverCertFile := "./certificate/localhost.crt.pem"
+
+    caCert, err := ioutil.ReadFile(serverCertFile)
+    if err != nil {
+        log.Fatalln(err.Error())
+        return
+    }
+    caCertPool := x509.NewCertPool()
+    caCertPool.AppendCertsFromPEM(caCert)
+
+    tlsConfig := &tls.Config{
+        RootCAs: caCertPool,
+    }
+
     CONNECT := arguments[1]
-    c, err := tls.Dial("tcp", CONNECT, nil)
+    c, err := tls.Dial("tcp", CONNECT, tlsConfig)
     if err != nil {
         log.Fatalln(err.Error())
         return
