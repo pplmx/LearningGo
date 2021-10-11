@@ -53,3 +53,8 @@ func main() {
         }
     }
 }
+
+// connect serverAddr e.g. 127.0.0.1:8080 or [::1]:9999
+func connect(serverAddr string)  {
+
+}
