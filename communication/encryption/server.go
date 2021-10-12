@@ -1,16 +1,14 @@
 package main
 
 import (
-    "bufio"
+    "LearningGo/communication/encryption/domain"
     "crypto/rand"
     "crypto/tls"
-    "fmt"
+    "encoding/json"
     "log"
     "net"
-    "strings"
     "time"
 )
-
 
 func main() {
     serverCertFile := "./certificate/localhost.crt.pem"
@@ -21,7 +19,7 @@ func main() {
 
 func startServer(port string, keyFile string, certFile string) {
     // load certificate
-    crt, err := tls.LoadX509KeyPair(keyFile, certFile)
+    crt, err := tls.LoadX509KeyPair(certFile, keyFile)
     if err != nil {
         log.Fatalln(err)
     }
@@ -30,7 +28,7 @@ func startServer(port string, keyFile string, certFile string) {
     tlsConfig.Time = time.Now
     tlsConfig.Rand = rand.Reader
 
-    listener, err := tls.Listen("tcp", port, tlsConfig)
+    listener, err := tls.Listen("tcp", ":"+port, tlsConfig)
     if err != nil {
         log.Fatalln(err)
     }
@@ -40,6 +38,7 @@ func startServer(port string, keyFile string, certFile string) {
             log.Fatalln(err)
         }
     }(listener)
+    log.Println("Listening on", listener.Addr().String())
 
     for {
         conn, err := listener.Accept()
@@ -53,28 +52,26 @@ func startServer(port string, keyFile string, certFile string) {
 }
 
 func handleConnection(c net.Conn) {
-    log.Println("Connection from ", c.RemoteAddr().String())
-    for {
-        netData, err := bufio.NewReader(c).ReadString('\n')
+    log.Println("Connection from", c.RemoteAddr().String())
+    defer func(c net.Conn) {
+        err := c.Close()
         if err != nil {
-            log.Fatalln(err)
+            log.Fatalln("Failed to Close Connection from", c.RemoteAddr().String())
         }
+    }(c)
 
-        temp := strings.TrimSpace(netData)
-        if temp == "STOP" {
-            break
+    for {
+        // parse the request
+        var req domain.Request
+        err := json.NewDecoder(c).Decode(&req)
+        if err != nil {
+            log.Println("Client exited due to", err)
+            return
         }
-        fmt.Println(temp)
-
+        log.Printf("%+v\n", req)
         _, err = c.Write([]byte("Received\n"))
         if err != nil {
             log.Fatalln(err)
         }
     }
-    defer func(c net.Conn) {
-        err := c.Close()
-        if err != nil {
-            log.Fatalln("Failed to Close Connection from ", c.RemoteAddr().String())
-        }
-    }(c)
 }
