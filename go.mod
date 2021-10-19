@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/gofiber/fiber/v2 v2.20.2
 	github.com/googollee/go-socket.io v1.6.1
-	github.com/lucas-clemente/quic-go v0.23.0
+	github.com/lucas-clemente/quic-go v0.24.0
 	gorm.io/gorm v1.21.16
 )
 
