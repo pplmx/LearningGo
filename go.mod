@@ -6,7 +6,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.21.0
 	github.com/googollee/go-socket.io v1.6.1
 	github.com/lucas-clemente/quic-go v0.24.0
-	gorm.io/gorm v1.22.1
+	gorm.io/gorm v1.22.2
 )
 
 require (
