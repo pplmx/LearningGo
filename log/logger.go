@@ -1,6 +1,7 @@
 package log
 
 import (
+    "errors"
     "fmt"
     "go.uber.org/zap"
     "go.uber.org/zap/zapcore"
@@ -85,11 +86,13 @@ func createLogger() *zap.Logger {
     fileDebug := getWriteSyncer(AppLog + "/debug.log")
     fileStd := getWriteSyncer(AppLog + "/app.log")
     fileError := getWriteSyncer(AppLog + "/error.log")
+    consoleDebug := zapcore.Lock(os.Stdout)
 
     enc := zap.NewProductionEncoderConfig()
     enc.TimeKey = "time"
     enc.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.000Z0700")
     fileEncoder := zapcore.NewJSONEncoder(enc)
+    consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
 
     // Join the outputs, encoders, and level-handling functions into
     // zapcore.Cores, then tee the four cores together.
@@ -97,6 +100,7 @@ func createLogger() *zap.Logger {
         zapcore.NewCore(fileEncoder, fileError, highPriority),
         zapcore.NewCore(fileEncoder, fileStd, stdPriority),
         zapcore.NewCore(fileEncoder, fileDebug, lowPriority),
+        zapcore.NewCore(consoleEncoder, consoleDebug, lowPriority),
     )
 
     // From a zapcore.Core, it's easy to construct a Logger.
@@ -108,7 +112,7 @@ func createLogger() *zap.Logger {
     logger := zap.New(core, caller, development, fields)
     defer func(logger *zap.Logger) {
         err := logger.Sync()
-        if err != nil {
+        if err != nil && !errors.Is(err, syscall.ENOTTY) {
             panic(err)
         }
     }(logger)
