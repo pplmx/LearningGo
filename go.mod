@@ -3,7 +3,7 @@ module LearningGo
 go 1.17
 
 require (
-	github.com/gofiber/fiber/v2 v2.21.0
+	github.com/gofiber/fiber/v2 v2.22.0
 	github.com/googollee/go-socket.io v1.6.1
 	github.com/lucas-clemente/quic-go v0.24.0
 	go.uber.org/zap v1.19.1
