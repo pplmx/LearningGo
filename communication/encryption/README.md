@@ -1,6 +1,6 @@
 # Self-signed Certificate
 
->   The deprecated, legacy behavior of treating the `CommonName` field on X.509 certificates as a host name when no Subject Alternative Names are present is now disabled by default. It can be temporarily re-enabled by adding the value `x509ignoreCN=0` to the `GODEBUG` environment variable.
+> The deprecated, legacy behavior of treating the `CommonName` field on X.509 certificates as a host name when no Subject Alternative Names are present is now disabled by default. It can be temporarily re-enabled by adding the value `x509ignoreCN=0` to the `GODEBUG` environment variable.
 >
 >   Note that if the `CommonName` is an invalid host name, it's always ignored, regardless of `GODEBUG` settings. Invalid names include those with any characters other than letters, digits, hyphens and underscores, and those with empty labels or trailing dots.
 
@@ -18,8 +18,6 @@ openssl req -x509 -nodes -sha256 \
 	-keyout root.key.pem \
 	-out root.crt.pem
 ```
-
-
 
 ## Self-signed Certificate by Owned CA
 
@@ -94,8 +92,6 @@ openssl x509 -req -sha256 -CAcreateserial -days 365 \
 
 ```
 
-
-
 ### one command [Not Recommend]
 
 ```shell
@@ -119,8 +115,6 @@ openssl x509 -req -sha256 -CAcreateserial -days 365 \
 
 ```
 
-
-
 ## Create Server Certificate
 
 ```shell
@@ -140,8 +134,6 @@ openssl x509 -req -sha256 -CAcreateserial -days 365 \
 	-in server.csr \
 	-out server.crt.pem
 ```
-
-
 
 ### cat crt_ext_server.cnf
 
@@ -173,8 +165,6 @@ DNS.1                           = localhost
 
 ```
 
-
-
 ## Create Client Certificate
 
 ```shell
@@ -194,8 +184,6 @@ openssl x509 -req -sha256 -CAcreateserial -days 365 \
 	-in client.csr \
 	-out client.crt.pem
 ```
-
-
 
 ### cat crt_ext_client.cnf
 
@@ -226,8 +214,6 @@ IP.2                            = ::1
 DNS.1                           = localhost
 
 ```
-
-
 
 ## Show Certificate Info
 

@@ -1,15 +1,15 @@
 package main
 
 import (
-    "LearningGo/fiber/routes"
-    "log"
+	"LearningGo/fiber/routes"
+	"log"
 )
 
 func main() {
-    app := routes.New()
+	app := routes.New()
 
-    // Handler 404
-    app.Use(routes.HttpNotFound)
+	// Handler 404
+	app.Use(routes.HttpNotFound)
 
-    log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":3000"))
 }

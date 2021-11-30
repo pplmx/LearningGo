@@ -32,7 +32,7 @@ func main() {
 
 	for {
 
-		netData, err :=
+		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
 			fmt.Println(err)
 			return

@@ -12,7 +12,7 @@ import (
 var count = 0
 
 func handleConnection(c net.Conn) {
-    fmt.Println("Connection from ", c.RemoteAddr().String())
+	fmt.Println("Connection from ", c.RemoteAddr().String())
 	for {
 		netData, err := bufio.NewReader(c).ReadString('\n')
 		if err != nil {
@@ -29,11 +29,11 @@ func handleConnection(c net.Conn) {
 		c.Write([]byte(counter))
 	}
 	defer func(c net.Conn) {
-        err := c.Close()
-        if err != nil {
-            fmt.Println("Failed to Close Connection from ", c.RemoteAddr().String())
-        }
-    }(c)
+		err := c.Close()
+		if err != nil {
+			fmt.Println("Failed to Close Connection from ", c.RemoteAddr().String())
+		}
+	}(c)
 }
 
 func main() {

@@ -1,10 +1,10 @@
 package main
 
 import (
-    "encoding/json"
-    "fmt"
-    "log"
-    "os"
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
 )
 
 type Demo struct {
@@ -25,18 +25,18 @@ type Demo struct {
 }
 
 func main() {
-    content, err := os.ReadFile("data1.json")
-    if err != nil {
-        log.Fatal("Error when opening file: ", err)
-    }
+	content, err := os.ReadFile("data1.json")
+	if err != nil {
+		log.Fatal("Error when opening file: ", err)
+	}
 
-    var demo Demo
-    err = json.Unmarshal(content, &demo)
-    if err != nil {
-        log.Fatal("Error during Unmarshal(): ", err)
-    }
-    bytesVar, err := json.Marshal(demo)
-    fmt.Println(demo)
-    fmt.Println(string(bytesVar))
+	var demo Demo
+	err = json.Unmarshal(content, &demo)
+	if err != nil {
+		log.Fatal("Error during Unmarshal(): ", err)
+	}
+	bytesVar, err := json.Marshal(demo)
+	fmt.Println(demo)
+	fmt.Println(string(bytesVar))
 
 }
