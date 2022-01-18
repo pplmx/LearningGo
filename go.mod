@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/gofiber/fiber/v2 v2.24.0
 	github.com/googollee/go-socket.io v1.6.1
-	github.com/lucas-clemente/quic-go v0.24.0
+	github.com/lucas-clemente/quic-go v0.25.0
 	go.uber.org/zap v1.20.0
 	gorm.io/gorm v1.22.5
 )
@@ -23,6 +23,7 @@ require (
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/marten-seemann/qtls-go1-16 v0.1.4 // indirect
 	github.com/marten-seemann/qtls-go1-17 v0.1.0 // indirect
+	github.com/marten-seemann/qtls-go1-18 v0.1.0-beta.1 // indirect
 	github.com/nxadm/tail v1.4.8 // indirect
 	github.com/onsi/ginkgo v1.16.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
