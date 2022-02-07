@@ -3,6 +3,7 @@ module LearningGo
 go 1.17
 
 require (
+	github.com/go-redis/redis/v8 v8.11.4
 	github.com/gofiber/fiber/v2 v2.26.0
 	github.com/google/uuid v1.3.0
 	github.com/googollee/go-socket.io v1.6.1
@@ -13,7 +14,9 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
