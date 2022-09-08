@@ -2,31 +2,7 @@ package tests
 
 import "testing"
 
-func Test_add(t *testing.T) {
-	type args struct {
-		a int
-		b int
-	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
-		{name: "Test_add1", args: args{1, 2}, want: 3},
-		{name: "Test_add2", args: args{-1, 2}, want: 1},
-		{name: "Test_add3", args: args{-1, -2}, want: -3},
-		{name: "Test_add4", args: args{1999, 2001}, want: 4000},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := add(tt.args.a, tt.args.b); got != tt.want {
-				t.Errorf("add() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_divide(t *testing.T) {
+func Test_Divide(t *testing.T) {
 	type args struct {
 		a float64
 		b float64
@@ -44,7 +20,7 @@ func Test_divide(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := divide(tt.args.a, tt.args.b)
+			got, err := Divide(tt.args.a, tt.args.b)
 			if tt.wantErr {
 				if err == nil {
 					t.Errorf("divide() error = %v, wantErr %v", err, tt.wantErr)
@@ -63,7 +39,7 @@ func Test_divide(t *testing.T) {
 	}
 }
 
-func Test_multiply(t *testing.T) {
+func Test_Multiply(t *testing.T) {
 	type args struct {
 		a int
 		b int
@@ -79,32 +55,42 @@ func Test_multiply(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := multiply(tt.args.a, tt.args.b); got != tt.want {
+			if got := Multiply(tt.args.a, tt.args.b); got != tt.want {
 				t.Errorf("multiply() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_subtract(t *testing.T) {
-	type args struct {
-		a int
-		b int
+func Benchmark_Multiply(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Multiply(32232, 21214)
 	}
-	tests := []struct {
-		name string
-		args args
-		want int
-	}{
-		{name: "Test_subtract1", args: args{1, 2}, want: -1},
-		{name: "Test_subtract2", args: args{-1, 2}, want: -3},
-		{name: "Test_subtract3", args: args{-1, -2}, want: 1},
+}
+
+func Benchmark_Divide(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, err := Divide(121345, 532312)
+		if err != nil {
+			return
+		}
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := subtract(tt.args.a, tt.args.b); got != tt.want {
-				t.Errorf("subtract() = %v, want %v", got, tt.want)
-			}
-		})
+}
+
+func BenchmarkFibonacci(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Fibonacci(20)
+	}
+}
+
+func BenchmarkFibonacciWithoutIterative(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		FibonacciWithoutIterative(80)
+	}
+}
+
+func BenchmarkFibonacciForVeryVeryBigNumber(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		FibonacciForVeryVeryBigNumber(80)
 	}
 }
