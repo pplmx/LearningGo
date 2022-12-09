@@ -23,7 +23,7 @@ type Graph struct {
 	adjMultiList       []Vertex
 }
 
-// UnGraph a undirected graph "class"
+// UnGraph an undirected graph "class"
 type UnGraph struct {
 	g         *Graph
 	vertexSet []VertexType

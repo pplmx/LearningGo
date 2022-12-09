@@ -22,7 +22,7 @@ func filterArcArr(arcs [][]int) [][]int {
 	//    {3, 4, 15},
 	//    {1, 2, 15}, // will be deleted
 	//    {4, 5},
-	//    {1, 2},
+	//    {1, 2}, // will be deleted
 	//    {1},    // will be deleted
 	//}
 	var filtered [][]int
