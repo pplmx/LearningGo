@@ -7,7 +7,7 @@ type VertexType interface{} // VertexType, e.g. 1, 2, 3 or A, B, C
 
 type Edge struct {
 	isVisited            bool  // mark that whether the current edge is visited
-	uIdx, vIdx           int   // the index of two vertices of the current edge in adj_multi_list
+	uIdx, vIdx           int   // the index of the current edge's two vertices in adj_multi_list
 	uNextEdge, vNextEdge *Edge // Respectively point to the next edge attached to these two vertices
 	info                 EdgeInfo
 }
