@@ -9,7 +9,7 @@ require (
 	github.com/googollee/go-socket.io v1.7.0
 	github.com/lucas-clemente/quic-go v0.31.1
 	go.uber.org/zap v1.24.0
-	gorm.io/gorm v1.24.5
+	gorm.io/gorm v1.24.6
 )
 
 require (
