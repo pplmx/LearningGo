@@ -7,7 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/google/uuid v1.3.0
 	github.com/googollee/go-socket.io v1.7.0
-	github.com/lucas-clemente/quic-go v0.31.1
+	github.com/lucas-clemente/quic-go v0.33.0
 	go.uber.org/zap v1.24.0
 	gorm.io/gorm v1.24.6
 )
