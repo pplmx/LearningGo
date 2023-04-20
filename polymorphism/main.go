@@ -1,8 +1,8 @@
 package main
 
 import (
-	"LearningGo/polymorphism/demo"
 	"github.com/google/uuid"
+	"github.com/pplmx/LearningGo/polymorphism/demo"
 	"time"
 )
 

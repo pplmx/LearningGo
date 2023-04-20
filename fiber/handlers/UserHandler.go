@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"LearningGo/fiber/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/pplmx/LearningGo/fiber/models"
 )
 
 // ResponseHTTP represents response body of this API

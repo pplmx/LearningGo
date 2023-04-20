@@ -1,7 +1,7 @@
 package main
 
 import (
-	"LearningGo/fiber/routes"
+	"github.com/pplmx/LearningGo/fiber/routes"
 	"log"
 )
 
