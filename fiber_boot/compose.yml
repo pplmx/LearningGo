@@ -1,0 +1,11 @@
+version: Compose specification
+services:
+    db:
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_DB: example
+            POSTGRES_USER: admin
+            POSTGRES_PASSWORD: admin
+        ports:
+            - 5432:5432
