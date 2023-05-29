@@ -44,7 +44,7 @@ func WalkMatchedFiles(dir string, pattern string) ([]string, error) {
 	return files, err
 }
 
-//ConvertHexoMarkdown2Hugo Convert all the front matter of hexo markdowns to hugo's
+// ConvertHexoMarkdown2Hugo Convert all the front matter of hexo markdowns to hugo's
 func ConvertHexoMarkdown2Hugo(files []string) {
 	newDir := fmt.Sprintf("hugo_posts%d", time.Now().Unix())
 	err := os.Mkdir(newDir, 0755)
@@ -110,7 +110,7 @@ func ConvertHexoMarkdown2Hugo(files []string) {
 	}
 }
 
-//HandleContent 将处理完的内容覆盖进去
+// HandleContent 将处理完的内容覆盖进去
 func HandleContent(newDir string, filePathNames string, result string) error {
 	//如果路径分割符为 \ 则替换为 /
 	filePathNames = strings.Replace(filePathNames, "\\", "/", -1)
@@ -136,7 +136,7 @@ func HandleContent(newDir string, filePathNames string, result string) error {
 	return nil
 }
 
-//HandleDate handle the line contains "date:"
+// HandleDate handle the line contains "date:"
 func HandleDate(date string) string {
 	// date: 2018-12-12 15:00:00
 	// to
@@ -148,7 +148,7 @@ func HandleDate(date string) string {
 	return date
 }
 
-//HandleUpdated handle the line contains "updated:"
+// HandleUpdated handle the line contains "updated:"
 func HandleUpdated(updated string) string {
 	// updated: 2018-12-12 15:00:00
 	// to
