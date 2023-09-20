@@ -29,6 +29,7 @@ func BenchmarkCreateUsers(b *testing.B) {
 		return
 	}
 
+	_ = db.Migrator().DropTable(&User{})
 	_ = db.AutoMigrate(&User{})
 
 	b.RunParallel(
@@ -54,7 +55,9 @@ func BenchmarkUpdateUsers(b *testing.B) {
 		return
 	}
 
+	_ = db.Migrator().DropTable(&User{})
 	_ = db.AutoMigrate(&User{})
+	db.Create(&User{UID: "uid_1"})
 
 	b.RunParallel(
 		func(pb *testing.PB) {
