@@ -1,8 +1,9 @@
-go 1.21
+go 1.21.1
 
 use (
 	.
 	./fiber
 	./fiber_boot
 	./polymorphism
+	./sqlite3_demo
 )
