@@ -1,6 +1,9 @@
 # Custom
 **/*.log
 **/.scannerwork
+*.db
+*.db-shm
+*.db-wal
 
 # Created by .ignore support plugin (hsz.mobi)
 # IntelliJ project files
