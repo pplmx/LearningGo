@@ -2,13 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/glebarez/sqlite"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/glebarez/sqlite"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type User struct {
@@ -17,20 +19,8 @@ type User struct {
 }
 
 func BenchmarkCreateUsers(b *testing.B) {
-	// dsn := "file:./x.db?_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
-	dsn := "file::memory:?cache=shared&_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
-
-	lg := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{LogLevel: logger.Error})
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
-		Logger: lg,
-	})
-	if err != nil {
-		fmt.Printf("failed to connect sqlite3 database: %v\n", err)
-		return
-	}
-
-	_ = db.Migrator().DropTable(&User{})
-	_ = db.AutoMigrate(&User{})
+	db, err := initDB()
+	require.Nil(b, err)
 
 	b.RunParallel(
 		func(pb *testing.PB) {
@@ -43,20 +33,8 @@ func BenchmarkCreateUsers(b *testing.B) {
 }
 
 func BenchmarkUpdateUsers(b *testing.B) {
-	// dsn := "file:./x.db?_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
-	dsn := "file::memory:?cache=shared&_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
-
-	lg := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{LogLevel: logger.Error})
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
-		Logger: lg,
-	})
-	if err != nil {
-		fmt.Printf("failed to connect sqlite3 database: %v\n", err)
-		return
-	}
-
-	_ = db.Migrator().DropTable(&User{})
-	_ = db.AutoMigrate(&User{})
+	db, err := initDB()
+	require.Nil(b, err)
 	db.Create(&User{UID: "uid_1"})
 
 	b.RunParallel(
@@ -67,4 +45,29 @@ func BenchmarkUpdateUsers(b *testing.B) {
 			}
 		},
 	)
+}
+
+func initDB() (*gorm.DB, error) {
+	// dsn := "file:./x.db?_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
+	dsn := "file::memory:?cache=shared&_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
+
+	lg := logger.New(log.New(os.Stdout, "\r\n", log.LstdFlags), logger.Config{LogLevel: logger.Error})
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
+		Logger: lg,
+	})
+	if err != nil {
+		fmt.Printf("failed to connect sqlite3 database: %v\n", err)
+		return nil, err
+	}
+
+	err = db.Migrator().DropTable(&User{})
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.AutoMigrate(&User{})
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
 }
