@@ -13,9 +13,15 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+type Group struct {
+	gorm.Model
+	Name string `gorm:"index:idx_group_name,unique"`
+}
+
 type User struct {
 	gorm.Model
-	UID string `gorm:"index:idx_user_uid,unique"`
+	UID     string `gorm:"index:idx_user_uid,unique"`
+	GroupID uint
 }
 
 func BenchmarkCreateUsers(b *testing.B) {
@@ -26,7 +32,10 @@ func BenchmarkCreateUsers(b *testing.B) {
 		func(pb *testing.PB) {
 			for pb.Next() {
 				uuidStr := uuid.NewString()
-				db.Create(&User{UID: "uid_" + uuidStr})
+				db.Create(&User{
+					UID:     "uid_" + uuidStr,
+					GroupID: 1,
+				})
 			}
 		},
 	)
@@ -60,14 +69,20 @@ func initDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	err = db.Migrator().DropTable(&User{})
+	err = db.Migrator().DropTable(&Group{}, &User{})
 	if err != nil {
 		return nil, err
 	}
 
-	err = db.AutoMigrate(&User{})
+	err = db.AutoMigrate(&Group{}, &User{})
 	if err != nil {
 		return nil, err
 	}
+
+	err = db.Create(&Group{Name: "group_1"}).Error
+	if err != nil {
+		return nil, err
+	}
+
 	return db, nil
 }
