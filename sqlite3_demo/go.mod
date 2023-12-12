@@ -4,7 +4,7 @@ go 1.21.1
 
 require (
 	github.com/glebarez/sqlite v1.9.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.5.0
 	github.com/stretchr/testify v1.8.4
 	gorm.io/gorm v1.25.4
 )
