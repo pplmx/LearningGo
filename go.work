@@ -2,9 +2,9 @@ go 1.21.1
 
 use (
 	.
+	./encrypt
 	./fiber
 	./fiber_boot
 	./polymorphism
 	./sqlite3_demo
-	./encrypt
 )
