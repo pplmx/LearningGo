@@ -4,8 +4,11 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha256"
 	"errors"
+	"fmt"
 	"io"
+	"os"
 	"sync"
 )
 
@@ -13,6 +16,100 @@ var cache = struct {
 	sync.RWMutex
 	m map[string][]byte
 }{m: make(map[string][]byte)}
+
+func EncryptFiles(files []*os.File, key []byte) error {
+	var wg sync.WaitGroup // WaitGroup to wait for all goroutines to finish.
+	for _, file := range files {
+		wg.Add(1) // Add a count to the WaitGroup.
+
+		go func(file *os.File) {
+			defer wg.Done()
+
+			// Get the file info.
+			info, err := file.Stat()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			// Read the file into a buffer.
+			plaintext := make([]byte, info.Size())
+			_, err = file.Read(plaintext)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			// Encrypt the plaintext.
+			ciphertext, err := AdvancedEncrypt(plaintext, key)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			// print the hash of the plaintext and ciphertext
+			fmt.Printf("%s[plaintext hash]: %x\n", file.Name(), Hash(plaintext))
+			fmt.Printf("%s[ciphertext hash]: %x\n", file.Name(), Hash(ciphertext))
+
+			err = os.WriteFile(file.Name(), ciphertext, info.Mode())
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}(file)
+	}
+
+	wg.Wait() // Wait for all goroutines to finish.
+	return nil
+}
+
+func DecryptFiles(files []*os.File, key []byte) error {
+	var wg sync.WaitGroup
+
+	for _, file := range files {
+		wg.Add(1)
+
+		go func(file *os.File) {
+			defer wg.Done()
+
+			info, err := file.Stat()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			// Read the file into a buffer.
+			ciphertext := make([]byte, info.Size())
+			_, err = file.Read(ciphertext)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			// Decrypt the ciphertext.
+			plaintext, err := AdvancedDecrypt(ciphertext, key)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			// print the hash of the plaintext and ciphertext
+			fmt.Printf("%s[plaintext hash]: %x\n", file.Name(), Hash(plaintext))
+			fmt.Printf("%s[ciphertext hash]: %x\n", file.Name(), Hash(ciphertext))
+
+			// Write the plaintext to the file.
+			err = os.WriteFile(file.Name(), plaintext, info.Mode())
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+		}(file)
+	}
+
+	wg.Wait()
+
+	return nil
+}
 
 // ConcurrentEncrypt encrypts multiple plaintexts concurrently.
 func ConcurrentEncrypt(plaintexts [][]byte, key []byte) ([][]byte, error) {
@@ -158,4 +255,8 @@ func Decrypt(ciphertext []byte, key []byte) ([]byte, error) {
 	stream.XORKeyStream(ciphertext, ciphertext)
 
 	return ciphertext, nil
+}
+
+func Hash(data []byte) [32]byte {
+	return sha256.Sum256(data)
 }

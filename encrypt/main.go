@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/pplmx/LearningGo/encrypt/lib"
+	"os"
 )
 
 func main() {
@@ -11,6 +12,9 @@ func main() {
 	advancedDemo()
 	fmt.Println("=====================================")
 	concurrentDemo()
+	fmt.Println("=====================================")
+	encryptFilesDemo()
+	decryptFilesDemo()
 }
 
 func demo() {
@@ -93,4 +97,64 @@ func concurrentDemo() {
 	for _, decryptedText := range decryptedTexts {
 		fmt.Println("Decrypted text: ", string(decryptedText))
 	}
+}
+
+func encryptFilesDemo() {
+	key := []byte("myverystrongpasswordo32bitlength") // replace with your key
+	// Define the file names
+	fileNames := []string{"data/hi.txt", "data/hello.yaml", "data/hey.toml"}
+
+	// Create a slice to store the file pointers
+	plaintextFiles := make([]*os.File, len(fileNames))
+
+	// Open each file and append it to the slice
+	for i, fileName := range fileNames {
+		file, err := os.Open(fileName)
+		if err != nil {
+			fmt.Println("Error opening file: ", err)
+			return
+		}
+		defer file.Close()
+
+		plaintextFiles[i] = file
+	}
+
+	// Encrypt the plaintextFiles concurrently
+	err := lib.EncryptFiles(plaintextFiles, key)
+	if err != nil {
+		fmt.Println("Error during encryption: ", err)
+		return
+	}
+
+	fmt.Println("Files encrypted successfully")
+}
+
+func decryptFilesDemo() {
+	key := []byte("myverystrongpasswordo32bitlength") // replace with your key
+	// Define the file names
+	fileNames := []string{"data/hi.txt", "data/hello.yaml", "data/hey.toml"}
+
+	// Create a slice to store the file pointers
+	ciphertextFiles := make([]*os.File, len(fileNames))
+
+	// Open each file and append it to the slice
+	for i, fileName := range fileNames {
+		file, err := os.Open(fileName)
+		if err != nil {
+			fmt.Println("Error opening file: ", err)
+			return
+		}
+		defer file.Close()
+
+		ciphertextFiles[i] = file
+	}
+
+	// Decrypt the ciphertextFiles concurrently
+	err := lib.DecryptFiles(ciphertextFiles, key)
+	if err != nil {
+		fmt.Println("Error during decryption: ", err)
+		return
+	}
+
+	fmt.Println("Files decrypted successfully")
 }

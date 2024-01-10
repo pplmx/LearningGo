@@ -1,0 +1,4 @@
+hi = "world"
+
+[app]
+name = "hello"
