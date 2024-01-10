@@ -7,6 +7,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	lop "github.com/samber/lo/parallel"
 	"io"
 	"os"
 	"sync"
@@ -255,6 +256,20 @@ func Decrypt(ciphertext []byte, key []byte) ([]byte, error) {
 	stream.XORKeyStream(ciphertext, ciphertext)
 
 	return ciphertext, nil
+}
+
+func SimpleEncrypt(plaintext []byte) ([]byte, error) {
+	ciphertext := lop.Map(plaintext, func(i byte, _ int) byte {
+		return 0xff - i
+	})
+	return ciphertext, nil
+}
+
+func SimpleDecrypt(ciphertext []byte) ([]byte, error) {
+	plaintext := lop.Map(ciphertext, func(i byte, _ int) byte {
+		return 0xff - i
+	})
+	return plaintext, nil
 }
 
 func Hash(data []byte) [32]byte {
