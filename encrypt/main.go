@@ -4,18 +4,21 @@ import (
 	"fmt"
 	"github.com/pplmx/LearningGo/encrypt/lib"
 	"os"
+	"path/filepath"
 )
 
 func main() {
-	demo()
-	fmt.Println("=====================================")
-	advancedDemo()
-	fmt.Println("=====================================")
-	concurrentDemo()
-	fmt.Println("=====================================")
-	encryptFilesDemo()
-	fmt.Println("=====================================")
-	decryptFilesDemo()
+	//demo()
+	//fmt.Println("=====================================")
+	//advancedDemo()
+	//fmt.Println("=====================================")
+	//concurrentDemo()
+	//fmt.Println("=====================================")
+	//encryptFilesDemo()
+	//fmt.Println("=====================================")
+	//decryptFilesDemo()
+
+	encryptFilesCli()
 }
 
 func demo() {
@@ -158,4 +161,69 @@ func decryptFilesDemo() {
 	}
 
 	fmt.Println("Files decrypted successfully")
+}
+
+func encryptFilesCli() {
+	if len(os.Args) < 3 {
+		fmt.Println("Usage: security encrypt/decrypt <file/directory>")
+		os.Exit(1)
+	}
+
+	op := os.Args[1]
+	if op != "encrypt" && op != "decrypt" {
+		fmt.Println("Usage: security encrypt/decrypt <file/directory>")
+		os.Exit(1)
+	}
+	path := os.Args[2]
+
+	// Check if the path is a directory
+	pathInfo, err := os.Stat(path)
+	if err != nil {
+		fmt.Println("Error opening file/directory: ", err)
+		os.Exit(1)
+	}
+
+	var files []*os.File
+	defer func() {
+		for _, file := range files {
+			file.Close()
+		}
+	}()
+
+	// If the path is a directory, encrypt all files in the directory
+	if pathInfo.IsDir() {
+		// using filepath.Walk to recursively walk through all files in the directory
+		err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+			if info.IsDir() {
+				return nil // skip directories
+			}
+
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+
+			files = append(files, file)
+
+			return nil
+		})
+		if err != nil {
+			fmt.Println("Error walking through directory: ", err)
+			os.Exit(1)
+		}
+	} else {
+		file, err := os.Open(path)
+		if err != nil {
+			fmt.Println("Error opening file: ", err)
+			os.Exit(1)
+		}
+
+		files = append(files, file)
+	}
+
+	if op == "encrypt" {
+		err = lib.EncryptFiles(files, []byte("myverystrongpasswordo32bitlength"))
+	} else {
+		err = lib.DecryptFiles(files, []byte("myverystrongpasswordo32bitlength"))
+	}
 }
