@@ -6,4 +6,5 @@ use (
 	./fiber_boot
 	./polymorphism
 	./sqlite3_demo
+	./encrypt
 )
