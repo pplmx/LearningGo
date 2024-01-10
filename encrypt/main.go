@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/pplmx/LearningGo/encrypt/lib"
 	"os"
-	"path/filepath"
 )
 
 func main() {
@@ -105,26 +105,9 @@ func concurrentDemo() {
 
 func encryptFilesDemo() {
 	key := []byte("myverystrongpasswordo32bitlength") // replace with your key
-	// Define the file names
-	fileNames := []string{"data/hi.txt", "data/hello.yaml", "data/hey.toml"}
-
-	// Create a slice to store the file pointers
-	plaintextFiles := make([]*os.File, len(fileNames))
-
-	// Open each file and append it to the slice
-	for i, fileName := range fileNames {
-		file, err := os.Open(fileName)
-		if err != nil {
-			fmt.Println("Error opening file: ", err)
-			return
-		}
-		defer file.Close()
-
-		plaintextFiles[i] = file
-	}
 
 	// Encrypt the plaintextFiles concurrently
-	err := lib.EncryptFiles(plaintextFiles, key)
+	err := lib.EncryptFiles("data", key)
 	if err != nil {
 		fmt.Println("Error during encryption: ", err)
 		return
@@ -135,26 +118,9 @@ func encryptFilesDemo() {
 
 func decryptFilesDemo() {
 	key := []byte("myverystrongpasswordo32bitlength") // replace with your key
-	// Define the file names
-	fileNames := []string{"data/hi.txt", "data/hello.yaml", "data/hey.toml"}
-
-	// Create a slice to store the file pointers
-	ciphertextFiles := make([]*os.File, len(fileNames))
-
-	// Open each file and append it to the slice
-	for i, fileName := range fileNames {
-		file, err := os.Open(fileName)
-		if err != nil {
-			fmt.Println("Error opening file: ", err)
-			return
-		}
-		defer file.Close()
-
-		ciphertextFiles[i] = file
-	}
 
 	// Decrypt the ciphertextFiles concurrently
-	err := lib.DecryptFiles(ciphertextFiles, key)
+	err := lib.DecryptFiles("data", key)
 	if err != nil {
 		fmt.Println("Error during decryption: ", err)
 		return
@@ -176,54 +142,40 @@ func encryptFilesCli() {
 	}
 	path := os.Args[2]
 
-	// Check if the path is a directory
-	pathInfo, err := os.Stat(path)
+	// Generate a short UUID
+	uuidStr := uuid.New().String()[:8]
+
+	// Determine the destination directory based on the operation
+	destDir := "encrypted_" + uuidStr
+	if op == "decrypt" {
+		destDir = "decrypted_" + uuidStr
+	}
+
+	// Create the destination directory if it doesn't exist
+	if _, err := os.Stat(destDir); os.IsNotExist(err) {
+		err := os.Mkdir(destDir, 0755)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
+	// Copy the files or directories to the destination directory
+	err := lib.CopyFiles(path, destDir)
 	if err != nil {
-		fmt.Println("Error opening file/directory: ", err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	var files []*os.File
-	defer func() {
-		for _, file := range files {
-			file.Close()
-		}
-	}()
-
-	// If the path is a directory, encrypt all files in the directory
-	if pathInfo.IsDir() {
-		// using filepath.Walk to recursively walk through all files in the directory
-		err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() {
-				return nil // skip directories
-			}
-
-			file, err := os.Open(path)
-			if err != nil {
-				return err
-			}
-
-			files = append(files, file)
-
-			return nil
-		})
-		if err != nil {
-			fmt.Println("Error walking through directory: ", err)
-			os.Exit(1)
-		}
+	// Encrypt or decrypt the files in the destination directory
+	if op == "encrypt" {
+		err = lib.EncryptFiles(destDir, []byte("myverystrongpasswordo32bitlength"))
 	} else {
-		file, err := os.Open(path)
-		if err != nil {
-			fmt.Println("Error opening file: ", err)
-			os.Exit(1)
-		}
-
-		files = append(files, file)
+		err = lib.DecryptFiles(destDir, []byte("myverystrongpasswordo32bitlength"))
 	}
 
-	if op == "encrypt" {
-		err = lib.EncryptFiles(files, []byte("myverystrongpasswordo32bitlength"))
-	} else {
-		err = lib.DecryptFiles(files, []byte("myverystrongpasswordo32bitlength"))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }

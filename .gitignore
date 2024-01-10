@@ -1,6 +1,7 @@
 # Custom
 **/*.log
 **/.scannerwork
+**/bin
 *.db
 *.db-shm
 *.db-wal
