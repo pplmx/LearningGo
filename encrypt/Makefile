@@ -1,4 +1,4 @@
-.PHONY: help
+.PHONY: help build
 .DEFAULT_GOAL := help
 
 APP_NAME := security
