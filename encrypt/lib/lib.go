@@ -299,14 +299,17 @@ func Decrypt(ciphertext []byte, key []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func SimpleEncrypt(plaintext []byte) ([]byte, error) {
+// SimpleEncrypt encrypts a plaintext.
+// The key is ignored; this underline parameter is to align with the Encrypt function with the same signature.
+func SimpleEncrypt(plaintext []byte, _ []byte) ([]byte, error) {
 	ciphertext := lop.Map(plaintext, func(i byte, _ int) byte {
 		return 0xff - i
 	})
 	return ciphertext, nil
 }
 
-func SimpleDecrypt(ciphertext []byte) ([]byte, error) {
+// SimpleDecrypt decrypts a ciphertext.
+func SimpleDecrypt(ciphertext []byte, _ []byte) ([]byte, error) {
 	plaintext := lop.Map(ciphertext, func(i byte, _ int) byte {
 		return 0xff - i
 	})
