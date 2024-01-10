@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pplmx/LearningGo/encrypt/lib"
 	"os"
+	"path/filepath"
 )
 
 func main() {
@@ -130,14 +131,27 @@ func decryptFilesDemo() {
 }
 
 func encryptFilesCli() {
+	binaryName := filepath.Base(os.Args[0])
+	usage := fmt.Sprintf(`
+Usage: %s <Command>
+
+Commands:
+	encrypt <file/directory>          The encrypted files will be stored in a directory named encrypted_<uuid>
+	decrypt <file/directory>          The decrypted files will be stored in a directory named decrypted_<uuid>
+
+Examples:
+	%s encrypt data
+	%s decrypt encrypted_12345678
+	`, binaryName, binaryName, binaryName)
+
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: security encrypt/decrypt <file/directory>")
+		fmt.Println(usage)
 		os.Exit(1)
 	}
 
 	op := os.Args[1]
 	if op != "encrypt" && op != "decrypt" {
-		fmt.Println("Usage: security encrypt/decrypt <file/directory>")
+		fmt.Println(usage)
 		os.Exit(1)
 	}
 	path := os.Args[2]
