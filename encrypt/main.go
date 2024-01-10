@@ -14,6 +14,7 @@ func main() {
 	concurrentDemo()
 	fmt.Println("=====================================")
 	encryptFilesDemo()
+	fmt.Println("=====================================")
 	decryptFilesDemo()
 }
 
