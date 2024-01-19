@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	lop "github.com/samber/lo/parallel"
 	"io"
 	"os"
 	"path/filepath"
@@ -299,21 +298,14 @@ func Decrypt(ciphertext []byte, key []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-// SimpleEncrypt encrypts a plaintext.
-// The key is ignored; this underline parameter is to align with the Encrypt function with the same signature.
-func SimpleEncrypt(plaintext []byte, _ []byte) ([]byte, error) {
-	ciphertext := lop.Map(plaintext, func(i byte, _ int) byte {
-		return 0xff - i
-	})
-	return ciphertext, nil
-}
-
-// SimpleDecrypt decrypts a ciphertext.
-func SimpleDecrypt(ciphertext []byte, _ []byte) ([]byte, error) {
-	plaintext := lop.Map(ciphertext, func(i byte, _ int) byte {
-		return 0xff - i
-	})
-	return plaintext, nil
+// XOR a simple encrypt/decrypt algorithm
+// a ^ b ^ b = a
+// secret, such as 0xff
+func XOR(raw []byte, secret byte) []byte {
+	for i := range raw {
+		raw[i] ^= secret
+	}
+	return raw
 }
 
 func Hash(data []byte) [32]byte {
