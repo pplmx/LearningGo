@@ -1,6 +1,7 @@
 package collections
 
 import (
+	"runtime"
 	"sync"
 )
 
@@ -18,49 +19,41 @@ func Map[T any](items []T, mf mapFunc[T]) []T {
 
 // ConcurrentMap is the Map function with concurrency.
 func ConcurrentMap[T any](items []T, mf mapFunc[T]) []T {
-	// Define the number of chunks
-	numChunks := 4 // You can adjust this based on your needs
+	// Determine optimal chunk size based on CPU cores and workload
+	numChunks := runtime.NumCPU()
 
-	// Define the size of each chunk
-	chunkSize := len(items) / numChunks
+	// Adjust chunk size if the number of items is small
+	if len(items) < numChunks*1000 { // Adjust a threshold as needed
+		numChunks = 1
+	}
 
-	// Create a wait group to wait for all goroutines to finish
+	chunkSize := (len(items) + numChunks - 1) / numChunks // Ensure even distribution
+
+	// Create a buffered channel to avoid blocking, explicitly specifying its capacity
+	resultCh := make(chan []T, numChunks) // Buffer channel to avoid deadlock
+
 	var wg sync.WaitGroup
-
-	// Create a channel to receive processed chunks
-	resultCh := make(chan []T, numChunks) // Buffer the channel to avoid blocking
-
-	// Split the items into chunks and process each chunk concurrently
 	for i := 0; i < numChunks; i++ {
 		wg.Add(1)
-		startIndex := i * chunkSize
-		endIndex := (i + 1) * chunkSize
-		if i == numChunks-1 {
-			endIndex = len(items)
-		}
-
-		go func(slice []T) {
+		go func(startIndex, endIndex int) {
 			defer wg.Done()
-			// Process the chunk using the provided mapFunc
-			for j, v := range slice {
-				slice[j] = mf(v)
+			// Use the original Map instead of creating a new one for each goroutine
+			chunk := Map(items[startIndex:endIndex], mf)
+			// Avoid sending nil if the chunk is empty
+			if len(chunk) > 0 {
+				resultCh <- chunk // Send processed chunk only if it's not empty
 			}
-			// Send the processed chunk to the channel
-			resultCh <- slice
-		}(items[startIndex:endIndex])
+		}(i*chunkSize, min(i*chunkSize+chunkSize, len(items)))
 	}
 
-	// Close the channel when all goroutines are done
-	go func() {
-		wg.Wait()
-		close(resultCh)
-	}()
+	// Wait for all goroutines to finish before closing the channel
+	wg.Wait()
+	close(resultCh) // Explicitly close the channel after all sends are done
 
-	// Collect the processed chunks from the channel and concatenate them
-	var result []T
+	results := make([]T, 0, len(items)) // Pre-allocate results slice for efficiency
 	for chunk := range resultCh {
-		result = append(result, chunk...)
+		results = append(results, chunk...)
 	}
 
-	return result
+	return results
 }
