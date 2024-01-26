@@ -6,6 +6,7 @@ import "sync"
 type mapFunc[T any] func(T) T
 
 // Map is a function that takes a slice of items and a mapFunc and returns a slice of items.
+// Modify the items in place to avoid allocation.
 func Map[T any](items []T, mf mapFunc[T]) []T {
 	for i, v := range items {
 		items[i] = mf(v)

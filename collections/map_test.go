@@ -2,6 +2,7 @@ package collections
 
 import (
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 )
@@ -20,6 +21,7 @@ func TestMap(t *testing.T) {
 		name: "Double numbers",
 		args: args[int]{
 			items: []int{1, 2, 3, 4, 5},
+			mf:    func(i int) int { return i * 2 },
 		},
 		want: []int{2, 4, 6, 8, 10},
 	}
@@ -27,33 +29,37 @@ func TestMap(t *testing.T) {
 		name: "Upper strings",
 		args: args[string]{
 			items: []string{"a", "b", "c", "d", "e"},
+			mf:    func(s string) string { return strings.ToUpper(s) },
 		},
 		want: []string{"A", "B", "C", "D", "E"},
 	}
 	t.Run(t1.name, func(t *testing.T) {
-		if got := Map(t1.args.items, func(i int) int {
-			return i * 2
-		}); !reflect.DeepEqual(got, t1.want) {
+		if got := Map(t1.args.items, t1.args.mf); !reflect.DeepEqual(got, t1.want) {
 			t.Errorf("Map() = %v, want %v", got, t1.want)
 		}
-		// FIXME: ConcurrentMap runs the mapFunc, whose result is not expected.
-		//if got := ConcurrentMap(t1.args.items, func(i int) int {
-		//	return i * 2
-		//}); !reflect.DeepEqual(got, t1.want) {
-		//	t.Errorf("ConcurrentMap() = %v, want %v", got, t1.want)
-		//}
+
+		// Because the t1.args.items has been modified by Map function, so we need to reset it.
+		t1.args.items = []int{1, 2, 3, 4, 5}
+		got := ConcurrentMap(t1.args.items, t1.args.mf)
+		sort.Ints(got)
+		sort.Ints(t1.want)
+		if !reflect.DeepEqual(got, t1.want) {
+			t.Errorf("ConcurrentMap() = %v, want %v", got, t1.want)
+		}
 	})
 	t.Run(t2.name, func(t *testing.T) {
-		if got := Map(t2.args.items, func(s string) string {
-			return strings.ToUpper(s)
-		}); !reflect.DeepEqual(got, t2.want) {
+		if got := Map(t2.args.items, t2.args.mf); !reflect.DeepEqual(got, t2.want) {
 			t.Errorf("Map() = %v, want %v", got, t2.want)
 		}
-		//if got := ConcurrentMap(t2.args.items, func(s string) string {
-		//	return strings.ToUpper(s)
-		//}); !reflect.DeepEqual(got, t2.want) {
-		//	t.Errorf("ConcurrentMap() = %v, want %v", got, t2.want)
-		//}
+
+		// reset t2.args.items
+		t2.args.items = []string{"a", "b", "c", "d", "e"}
+		got := ConcurrentMap(t2.args.items, t2.args.mf)
+		sort.Strings(got)
+		sort.Strings(t2.want)
+		if !reflect.DeepEqual(got, t2.want) {
+			t.Errorf("ConcurrentMap() = %v, want %v", got, t2.want)
+		}
 	})
 }
 
