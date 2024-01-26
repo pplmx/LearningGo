@@ -1,6 +1,8 @@
 package collections
 
-import "sync"
+import (
+	"sync"
+)
 
 // mapFunc is a function that takes an item of type T and returns an item of type T.
 type mapFunc[T any] func(T) T
@@ -16,22 +18,24 @@ func Map[T any](items []T, mf mapFunc[T]) []T {
 
 // ConcurrentMap is the Map function with concurrency.
 func ConcurrentMap[T any](items []T, mf mapFunc[T]) []T {
+	// Define the number of chunks
+	numChunks := 4 // You can adjust this based on your needs
 
 	// Define the size of each chunk
-	chunkSize := len(items) / 4 // You can adjust this based on your needs
+	chunkSize := len(items) / numChunks
 
 	// Create a wait group to wait for all goroutines to finish
 	var wg sync.WaitGroup
 
 	// Create a channel to receive processed chunks
-	resultCh := make(chan []T, 4) // Buffer the channel to avoid blocking
+	resultCh := make(chan []T, numChunks) // Buffer the channel to avoid blocking
 
 	// Split the items into chunks and process each chunk concurrently
-	for i := 0; i < 4; i++ {
+	for i := 0; i < numChunks; i++ {
 		wg.Add(1)
 		startIndex := i * chunkSize
 		endIndex := (i + 1) * chunkSize
-		if i == 3 {
+		if i == numChunks-1 {
 			endIndex = len(items)
 		}
 
