@@ -1,6 +1,6 @@
 module github.com/pplmx/LearningGo/sqlite3_demo
 
-go 1.21.6
+go 1.22.0
 
 require (
 	github.com/glebarez/sqlite v1.9.0
