@@ -5,7 +5,7 @@ go 1.21.6
 require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/stretchr/testify v1.8.4
-	go.uber.org/zap v1.26.0
+	go.uber.org/zap v1.27.0
 )
 
 require (
