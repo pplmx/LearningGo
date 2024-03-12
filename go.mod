@@ -1,6 +1,6 @@
 module LearningGo
 
-go 1.21.6
+go 1.22.1
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
