@@ -15,8 +15,12 @@ func isPrime(num int, primeChan chan<- int, wg *sync.WaitGroup) {
 		return
 	}
 
-	// 1, even numbers and numbers divisible by 3 are not prime
-	if num <= 1 || num%2 == 0 || num%3 == 0 {
+	// Prime-Number 6k ± 1 optimization:
+	// All prime numbers are of the form 6k ± 1, except 2 and 3.
+	// 6k + 1 means the number is 1 greater than a multiple of 6, hence num % 6 == 1.
+	// 6k - 1 means the number is 1 less than a multiple of 6, hence num % 6 == 5.
+	// Hence, if a number is not 6k ± 1, then it is not a prime number.
+	if num%6 != 1 && num%6 != 5 {
 		return
 	}
 
