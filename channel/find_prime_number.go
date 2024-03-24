@@ -6,74 +6,69 @@ import (
 	"sync"
 )
 
-func isPrime(num int, primeChan chan int, wg *sync.WaitGroup) {
+// isPrime checks if a number is prime and sends it to the channel if it is.
+func isPrime(num int, primeChan chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	// if num is 2, it is a prime number
+	if num <= 1 {
+		return // Not a prime number
+	}
 	if num == 2 {
-		primeChan <- num
+		primeChan <- num // The only even prime number
 		return
 	}
-
-	// if num is less than or equal to 1 or even number, it is not a prime number
-	if num <= 1 || num%2 == 0 {
-		return
+	if num%2 == 0 {
+		return // Exclude even numbers
 	}
 
-	// check if num is divisible by any odd number from 3 to sqrt(num)
-	sqrt := int(math.Sqrt(float64(num)))
-	for i := 3; i <= sqrt; i += 2 {
+	sqrtNum := int(math.Sqrt(float64(num)))
+	for i := 3; i <= sqrtNum; i += 2 {
 		if num%i == 0 {
-			return
+			return // Not a prime number
 		}
 	}
 
-	// num is a prime number
-	primeChan <- num
+	primeChan <- num // It's a prime number
 }
 
-// findPrimesWithNumbers find prime numbers from given numbers
+// findPrimesWithNumbers finds prime numbers from a given slice of numbers.
 func findPrimesWithNumbers(numbers []int) []int {
-	ch := make(chan int, len(numbers)) // Buffered channel
+	primeChan := make(chan int, len(numbers))
 	var wg sync.WaitGroup
-	var primes []int
 
 	for _, num := range numbers {
 		wg.Add(1)
-		go isPrime(num, ch, &wg)
+		go isPrime(num, primeChan, &wg)
 	}
 
-	wg.Wait() // Wait for all goroutines to finish
-	close(ch) // Close the channel
+	wg.Wait()
+	close(primeChan)
 
-	for prime := range ch {
-		if prime != 0 { // Ignore zero values
-			primes = append(primes, prime)
-		}
+	var primes []int
+	for prime := range primeChan {
+		primes = append(primes, prime)
 	}
 	return primes
 }
 
-// findPrimes find prime numbers since one to n number
-func findPrimes(n int) []int {
-	ch := make(chan int) // Unbuffered channel
+// findPrimes finds all prime numbers up to a given limit.
+func findPrimes(limit int) []int {
+	primeChan := make(chan int)
 	var wg sync.WaitGroup
-	var primes []int
 
-	for i := 1; i <= n; i++ {
+	for num := 2; num <= limit; num++ {
 		wg.Add(1)
-		go isPrime(i, ch, &wg)
+		go isPrime(num, primeChan, &wg)
 	}
 
 	go func() {
-		wg.Wait() // Wait for all goroutines to finish
-		close(ch) // Close the channel
+		wg.Wait()
+		close(primeChan)
 	}()
 
-	for prime := range ch {
-		if prime != 0 { // Ignore zero values
-			primes = append(primes, prime)
-		}
+	var primes []int
+	for prime := range primeChan {
+		primes = append(primes, prime)
 	}
 	return primes
 }
@@ -81,8 +76,8 @@ func findPrimes(n int) []int {
 func main() {
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	primes := findPrimesWithNumbers(numbers)
+	fmt.Println("Primes in the given slice:", primes)
 
 	ps := findPrimes(100)
-	fmt.Println(primes)
-	fmt.Println(ps)
+	fmt.Println("Primes up to 100:", ps)
 }
