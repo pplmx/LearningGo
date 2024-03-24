@@ -9,14 +9,17 @@ import (
 func isPrime(num int, primeChan chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	if num < 2 {
+		return
+	}
+
 	// 2 and 3 are prime numbers
 	if num == 2 || num == 3 {
 		primeChan <- num
 		return
 	}
 
-	// Prime-Number 6k ± 1 optimization:
-	// All prime numbers are of the form 6k ± 1, except 2 and 3.
+	// Prime-Number 6k ± 1 optimization: All prime numbers are of the form 6k ± 1, except 2 and 3.
 	// 6k + 1 means the number is 1 greater than a multiple of 6, hence num % 6 == 1.
 	// 6k - 1 means the number is 1 less than a multiple of 6, hence num % 6 == 5.
 	// Hence, if a number is not 6k ± 1, then it is not a prime number.
