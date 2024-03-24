@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"sync"
 )
 
@@ -10,24 +9,23 @@ import (
 func isPrime(num int, primeChan chan<- int, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	if num <= 1 {
-		return // Not a prime number
-	}
-	if num == 2 {
-		primeChan <- num // The only even prime number
+	// 2 and 3 are prime numbers
+	if num == 2 || num == 3 {
+		primeChan <- num
 		return
 	}
-	if num%2 == 0 {
-		return // Exclude even numbers
+
+	// 1, even numbers and numbers divisible by 3 are not prime
+	if num <= 1 || num%2 == 0 || num%3 == 0 {
+		return
 	}
 
-	sqrtNum := int(math.Sqrt(float64(num)))
-	for i := 3; i <= sqrtNum; i += 2 {
-		if num%i == 0 {
-			return // Not a prime number
+	// Optimize loop for 6k ± 1 optimization:
+	for i := 5; i*i <= num; i += 6 {
+		if num%i == 0 || num%(i+2) == 0 {
+			return
 		}
 	}
-
 	primeChan <- num // It's a prime number
 }
 
@@ -76,8 +74,10 @@ func findPrimes(limit int) []int {
 func main() {
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	primes := findPrimesWithNumbers(numbers)
-	fmt.Println("Primes in the given slice:", primes)
+	fmt.Printf("Primes in the given slice%+v: %v\n", numbers, primes)
 
-	ps := findPrimes(100)
-	fmt.Println("Primes up to 100:", ps)
+	// https://en.wikipedia.org/wiki/Prime-counting_function
+	limit := 100000
+	ps := findPrimes(limit)
+	fmt.Printf("Count of prime numbers up to %d: %d\n", limit, len(ps))
 }
