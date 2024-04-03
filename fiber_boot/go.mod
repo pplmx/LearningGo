@@ -1,6 +1,6 @@
 module github.com/pplmx/LearningGo/fiber_boot
 
-go 1.22.1
+go 1.22.2
 
 require (
 	github.com/go-playground/validator/v10 v10.19.0
