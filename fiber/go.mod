@@ -3,7 +3,7 @@ module github.com/pplmx/LearningGo/fiber
 go 1.22.1
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.2
+	github.com/gofiber/fiber/v2 v2.52.5
 	gorm.io/gorm v1.25.8
 )
 
