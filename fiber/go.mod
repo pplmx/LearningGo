@@ -4,7 +4,7 @@ go 1.22.1
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.2
-	gorm.io/gorm v1.25.8
+	gorm.io/gorm v1.25.11
 )
 
 require (
@@ -21,4 +21,5 @@ require (
 	github.com/valyala/fasthttp v1.52.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
 )
