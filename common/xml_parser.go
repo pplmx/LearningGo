@@ -4,7 +4,12 @@ import (
 	"encoding/xml"
 	"fmt"
 	"log"
+	"time"
 )
+
+const dateFormat = "2006-01-02 15:04:05"
+
+type XmlDate time.Time
 
 type SessionInfo struct {
 	XMLName  xml.Name         `xml:"sessionInfo"`
@@ -13,12 +18,24 @@ type SessionInfo struct {
 }
 
 type SessionFeature struct {
-	ID         uint32 `xml:"id,attr"`
-	Name       string `xml:"name,attr"`
-	Type       string `xml:"type,attr"`
-	Value      string `xml:"value,attr"`
-	EndDate    string `xml:"endDate,attr"`
-	UserNumber uint32 `xml:"userNumber,attr,omitempty"`
+	ID         uint32  `xml:"id,attr"`
+	Name       string  `xml:"name,attr"`
+	Type       string  `xml:"type,attr"`
+	Value      string  `xml:"value,attr"`
+	EndDate    XmlDate `xml:"endDate,attr"`
+	UserNumber uint32  `xml:"userNumber,attr,omitempty"`
+}
+
+// UnmarshalText For parsing the malformed time
+//  1. We must define an alias(XmlDate) for time.Time
+//  2. To implement UnmarshalText for XmlDate
+func (d *XmlDate) UnmarshalText(text []byte) error {
+	t, err := time.Parse(dateFormat, string(text))
+	if err != nil {
+		return err
+	}
+	*d = XmlDate(t)
+	return nil
 }
 
 func main() {
@@ -26,24 +43,10 @@ func main() {
 <?xml version="1.0" encoding="UTF-8"?>
 <sessionInfo timeZone="+08:00">
   <features>
-    <feature id="15" name="BPM" type="ro" value="1" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="18" name="SDK_CIRCUIT" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="1" name="PASSIVE_EME" type="ro" value="1" endDate="2025-12-31 15:59:59"/>
-    <feature id="11" name="PASSIVE_FDTD_GPU" type="ro" value="0" endDate="2025-12-31 15:59:59"/>
-    <feature id="16" name="RCWA" type="ro" value="1" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="3" name="FDTD" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="12" name="CIRCUIT" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="3" name="PASSIVE_FDTD" type="ro" value="1" endDate="2025-12-31 15:59:59"/>
-    <feature id="23" name="SDK_RCWA" type="ro" value="0" endDate="2025-12-31 15:59:59"/>
-    <feature id="20" name="SDK_EME" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="10" name="ACTIVE_OEDEVICE" type="ro" value="1" endDate="2025-12-31 15:59:59"/>
-    <feature id="1" name="EME" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="17" name="SDK_BPM" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="22" name="SDK_FDTD_GPU" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="11" name="FDTD_GPU" type="ro" value="1" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="21" name="SDK_FDTD" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="14" name="DDM" type="ro" value="1" endDate="2025-12-31 15:59:59" userNumber="198"/>
-    <feature id="19" name="SDK_DDM" type="ro" value="0" endDate="2025-12-31 15:59:59" userNumber="198"/>
+    <feature id="15" name="FEAT_A" type="ro" value="1" endDate="2025-12-31 15:59:59" userNumber="66"/>
+    <feature id="18" name="FEAT_E" type="ro" value="0" endDate="2025-11-30 15:59:59" userNumber="66"/>
+    <feature id="13" name="FEAT_B" type="ro" value="1" endDate="2025-10-31 15:59:59"/>
+    <feature id="11" name="FEAT_D" type="ro" value="0" endDate="2025-12-24 15:59:59"/>
   </features>
 </sessionInfo>
 `
@@ -65,12 +68,12 @@ func main() {
 	fmt.Printf("Session TimeZone: %s\n", si.TimeZone)
 	fmt.Println("Features:")
 	for id, feature := range idFeatureMap {
-		fmt.Printf("ID: %d\n", id)
-		fmt.Printf("  Name: %s\n", feature.Name)
-		fmt.Printf("  Type: %s\n", feature.Type)
-		fmt.Printf("  Value: %s\n", feature.Value)
-		fmt.Printf("  EndDate: %s\n", feature.EndDate)
-		fmt.Printf("  UserNumber: %d\n", feature.UserNumber)
+		fmt.Printf("    ID: %d\n", id)
+		fmt.Printf("    Name: %s\n", feature.Name)
+		fmt.Printf("    Type: %s\n", feature.Type)
+		fmt.Printf("    Value: %s\n", feature.Value)
+		fmt.Printf("    EndDate: %s\n", time.Time(feature.EndDate).Format(dateFormat))
+		fmt.Printf("    UserNumber: %d\n", feature.UserNumber)
 		fmt.Println()
 	}
 }
