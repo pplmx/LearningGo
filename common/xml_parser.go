@@ -26,7 +26,7 @@ type SessionFeature struct {
 	UserNumber uint32  `xml:"userNumber,attr,omitempty"`
 }
 
-// UnmarshalText For parsing the malformed time
+// UnmarshalText For parsing the malformed UTC datetime in xml
 //  1. We must define an alias(XmlDate) for time.Time
 //  2. To implement UnmarshalText for XmlDate
 func (d *XmlDate) UnmarshalText(text []byte) error {
