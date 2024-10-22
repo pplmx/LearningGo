@@ -3,7 +3,7 @@ module github.com/pplmx/LearningGo/fiber_boot
 go 1.22.5
 
 require (
-	github.com/go-playground/validator/v10 v10.22.0
+	github.com/go-playground/validator/v10 v10.22.1
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/template/html/v2 v2.1.2
 	github.com/joho/godotenv v1.5.1
