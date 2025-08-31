@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/rand"
 	"sync"
+	"sync/atomic"
 	"time"
 )
 
@@ -101,7 +103,7 @@ func stage(ctx context.Context, name string, in <-chan Task, out chan<- Task, as
 // ---------------------------
 // 消费者 - 改进版
 // ---------------------------
-func consumer(ctx context.Context, id int, taskCh <-chan Task, ctrlCh <-chan Control, async chan<- string) {
+func consumer(ctx context.Context, id int, taskCh <-chan Task, ctrlCh <-chan Control, async chan<- string, completedTasks *int64, totalTasks int64, cancel context.CancelFunc) {
 	for {
 		select {
 		case task, ok := <-taskCh:
@@ -115,6 +117,20 @@ func consumer(ctx context.Context, id int, taskCh <-chan Task, ctrlCh <-chan Con
 			select {
 			case async <- fmt.Sprintf("[Consumer %d] processed task %d", id, task.ID):
 			default:
+			}
+
+			// 增加完成任务计数
+			completed := atomic.AddInt64(completedTasks, 1)
+			fmt.Printf("[Consumer %d] Progress: %d/%d tasks completed\n", id, completed, totalTasks)
+
+			// 检查是否所有任务都已完成
+			if completed >= totalTasks {
+				fmt.Printf("[Consumer %d] All tasks completed! Initiating graceful shutdown...\n", id)
+				// 延迟一点时间让异步消息处理完
+				go func() {
+					time.Sleep(500 * time.Millisecond)
+					cancel()
+				}()
 			}
 
 		case ctrl, ok := <-ctrlCh:
@@ -167,6 +183,15 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
+	// 计算总任务数
+	const producerCount = 3
+	const tasksPerProducer = 5
+	const totalTasks = producerCount * tasksPerProducer
+	var completedTasks int64 // 完成任务计数器
+
+	fmt.Printf("🚀 Starting pipeline with %d producers, %d tasks each (total: %d tasks)\n",
+		producerCount, tasksPerProducer, totalTasks)
+
 	// 创建 channels
 	taskCh := make(chan Task, 10)
 	ctrlCh := make(chan Control, 5)
@@ -175,8 +200,8 @@ func main() {
 	var wg sync.WaitGroup
 
 	// 启动多个生产者 (每个生产者有自己的输出通道)
-	producerChannels := make([]chan Task, 3)
-	for i := 0; i < 3; i++ {
+	producerChannels := make([]chan Task, producerCount)
+	for i := 0; i < producerCount; i++ {
 		producerChannels[i] = make(chan Task, 5)
 		wg.Add(1)
 		go func(id int, ch chan Task) {
@@ -237,7 +262,7 @@ func main() {
 		wg.Add(1)
 		go func(id int) {
 			defer wg.Done()
-			consumer(ctx, id, stage3Ch, ctrlCh, asyncCh)
+			consumer(ctx, id, stage3Ch, ctrlCh, asyncCh, &completedTasks, totalTasks, cancel)
 		}(i)
 	}
 
@@ -259,9 +284,14 @@ func main() {
 
 	select {
 	case <-done:
-		fmt.Println("All tasks completed successfully!")
+		fmt.Println("✅ All tasks completed successfully!")
 	case <-ctx.Done():
-		fmt.Println("Execution timeout or cancelled")
+		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+			fmt.Println("⏰ Execution timeout")
+		} else {
+			fmt.Printf("🎯 Graceful shutdown completed! Final count: %d/%d tasks\n",
+				atomic.LoadInt64(&completedTasks), totalTasks)
+		}
 	}
 
 	// 关闭剩余 channels
