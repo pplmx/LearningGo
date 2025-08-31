@@ -1,10 +1,10 @@
 module LearningGo
 
-go 1.22.5
+go 1.25.0
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.11.1
 	go.uber.org/zap v1.27.0
 )
 
