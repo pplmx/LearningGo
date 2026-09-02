@@ -3,7 +3,7 @@ module github.com/pplmx/LearningGo/sqlite3_demo
 go 1.22.5
 
 require (
-	github.com/glebarez/sqlite v1.9.0
+	github.com/glebarez/sqlite v1.11.0
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.9.0
 	gorm.io/gorm v1.25.11
